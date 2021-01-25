@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, View, TouchableOpacity, StyleSheet, Image, Alert} from 'react-native';
+import {Text, View, TouchableOpacity, StyleSheet, Image, Alert, KeyboardAvoidingView, ToastAndroid} from 'react-native';
 import * as Permissions from 'expo-permissions'
 import {BarCodeScanner} from 'expo-barcode-scanner'
 import { TextInput } from 'react-native-gesture-handler';
@@ -55,7 +55,7 @@ export default class TransactionScreen extends React.Component{
         db.collection("students").doc(this.state.scannedStudentId).update({
             'numberOfBooksIssued' : firebase.firestore.FieldValue.increment(1)
         })
-        Alert.alert("Book Issued");
+        //Alert.alert("Book Issued");
         this.setState({
             scannedBookId: '',
             scannedStudentId: ''
@@ -74,7 +74,7 @@ export default class TransactionScreen extends React.Component{
         db.collection("students").doc(this.state.scannedStudentId).update({
             'numberOfBooksIssued' : firebase.firestore.FieldValue.increment(-1)
         })
-        Alert.alert("Book Returned");
+        //Alert.alert("Book Returned");
         this.setState({
             scannedBookId: '',
             scannedStudentId: ''
@@ -88,10 +88,12 @@ export default class TransactionScreen extends React.Component{
             if(book.bookAvailability) {
                 this.initiateBookIssue();
                 transactionMessage = "Book issued"
+                ToastAndroid.show(transactionMessage, ToastAndroid.SHORT, ToastAndroid.BOTTOM);
             }
             else{
                 this.initiateBookReturn();
                 transactionMessage = "book returned"
+                ToastAndroid.show(transactionMessage, ToastAndroid.SHORT, ToastAndroid.BOTTOM);
             }
         })
         this.setState({
@@ -110,7 +112,7 @@ export default class TransactionScreen extends React.Component{
             )
         } else if(buttonState === "normal") {
             return(
-                <View style = {styles.container}>
+                <KeyboardAvoidingView style = {styles.container} behavior = "padding" enabled > 
                     <View>
                         <Image 
                         source = {require("../assets/booklogo.jpg")}
@@ -120,6 +122,7 @@ export default class TransactionScreen extends React.Component{
                     <View style = {styles.inputView}> 
                         <TextInput style = {styles.inputBox}
                             placeholder = "Book ID" 
+                            onChangeText = {text => this.setState ({scannedBookId : text})}
                             value = {this.state.scannedBookId} />
                         <TouchableOpacity style = {styles.scanButton} 
                         onPress = {()=>{
@@ -131,6 +134,7 @@ export default class TransactionScreen extends React.Component{
                     <View style = {styles.inputView}> 
                         <TextInput style = {styles.inputBox}
                             placeholder = "Student ID" 
+                            onChangeText = {text => this.setState ({scannedStudentId : text})}
                             value = {this.state.scannedStudentId} />
                         <TouchableOpacity style = {styles.scanButton}
                         onPress = {()=>{
@@ -144,7 +148,7 @@ export default class TransactionScreen extends React.Component{
                         var transactionMessage = await this.handleTransaction()}} >
                         <Text style = {styles.submitButtonText}>Submit</Text>
                     </TouchableOpacity>
-                </View>
+                </KeyboardAvoidingView> 
             )
         }
     }
