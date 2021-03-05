@@ -38,7 +38,7 @@ export default class LoginScreen extends React.Component{
         return(
                 <KeyboardAvoidingView style = {{alignItems: 'center', marginTop: 20}} >
                     <View>
-                        <Image 
+                        <Image
                             source = {require ("../assets/booklogo.jpg")} 
                             style = {{width: 200, height: 200}}
                         />
